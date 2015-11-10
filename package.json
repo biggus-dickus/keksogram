@@ -1,0 +1,27 @@
+{
+  "name": "107049-keksogram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Обучающий проект «keksogram» от HTML Academy",
+  "author": "Макс Масленко",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/js-htmlacademy/107049-keksogram.git"
+  },
+  "bugs": {
+    "url": "https://github.com/js-htmlacademy/107049-keksogram/issues"
+  },
+  "homepage": "https://github.com/js-htmlacademy/107049-keksogram",
+  "dependencies": {
+    "eslint": "^1.9.0",
+    "http-server": "^0.8.5"
+  },
+  "scripts": {
+    "gosha": "make",
+    "test": "eslint js/",
+    "start": "http-server ."
+  },
+  "engines": {
+    "node": "^5.0.0"
+  }
+}

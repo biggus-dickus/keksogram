@@ -9,18 +9,18 @@ function getMessage(a, b) {
 			return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + (b * 4) + ' аттрибутов';
 		} else if ((typeof a == 'object') && (typeof b == 'object')) {
 			//Сначала проверяем, что оба аргумента являются массивами и выполняем этот блок кода раньше
-				if ((Array.isArray(a) && Array.isArray(b)) && (a.length == b.length)) {
-					for (var square = 0, i = 0; i < a.length; i++) {
-						square += (a[i] * b[i]);
-					}
-				return 'Общая площадь артефактов сжатия: ' + square + ' пикселей';
+			if ((Array.isArray(a) && Array.isArray(b)) && (a.length == b.length)) {
+				for (var square = 0, i = 0; i < a.length; i++) {
+					square += (a[i] * b[i]);
+				}
+			return 'Общая площадь артефактов сжатия: ' + square + ' пикселей';
 			}
 		} else if (typeof a == 'object') {
 				if (Array.isArray(a)) {
 					for (var sum = 0, i = 0; i < a.length; i++) {
 						sum += a[i];
 					}
-					return 'Количество красных точек во всех строчках изображения: ' + sum;
+				return 'Количество красных точек во всех строчках изображения: ' + sum;
 				}
 	} else {
 			return 'Что-то пошло не так...';

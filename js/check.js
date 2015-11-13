@@ -16,13 +16,13 @@ function getMessage(a, b) {
 				return 'Общая площадь артефактов сжатия: ' + square + ' пикселей';
 			}
 		} else if (typeof a == 'object') {
-		if (Array.isArray(a)) {
-			for (var sum = 0, i = 0; i < a.length; i++) {
-				sum += a[i];
-			}
-			return 'Количество красных точек во всех строчках изображения: ' + sum;
-		}
+				if (Array.isArray(a)) {
+					for (var sum = 0, i = 0; i < a.length; i++) {
+						sum += a[i];
+					}
+					return 'Количество красных точек во всех строчках изображения: ' + sum;
+				}
 	} else {
-		return 'Что-то пошло не так...';
+			return 'Что-то пошло не так...';
 	}
 }

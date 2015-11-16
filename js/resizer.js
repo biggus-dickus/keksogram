@@ -98,7 +98,7 @@
       this._ctx.lineDashOffset = 7;
 
       // Сохранение состояния канваса.
-      // Подробней см. строку 159.
+      // Подробней см. строку 210.
       this._ctx.save();
 
       // Установка начальной точки системы координат в центр холста.
@@ -142,6 +142,59 @@
       this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       this._ctx.fill();
 
+      // Отрисовка текста (данные о ширине и высоте изображения в пикселях)
+      this._ctx.fillText(
+        this._image.naturalWidth + ' × ' + this._image.naturalHeight,
+        0,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2);
+
+      /**
+      * Отрисовка области кадрирования с границей из точек.
+      */
+      var dotSize = 6; // размер такой же, как у прежней штрихованной рамки
+      var dotNumber = this._resizeConstraint.side / dotSize / 2;
+      var dotRadius = dotSize / 2;
+      this._ctx.fillStyle = '#ffe753';
+
+      for(var i = 0; i < dotNumber; i++) {
+      // В цикле рисуем 4 стороны квадрата с круглой обводкой
+        this._ctx.beginPath();
+        this._ctx.arc(
+          (-this._resizeConstraint.side / 2) - dotRadius + dotSize * i * 2,
+          (-this._resizeConstraint.side / 2) - dotRadius,
+          dotRadius,
+          0,
+          Math.PI * 2);
+        this._ctx.fill();
+
+        this._ctx.beginPath();
+        this._ctx.arc(
+          this._resizeConstraint.side / 2 - dotSize,
+          (-this._resizeConstraint.side / 2) - dotRadius + dotSize * i * 2,
+          dotRadius,
+          0,
+          Math.PI * 2);
+        this._ctx.fill();
+
+        this._ctx.beginPath();
+        this._ctx.arc(
+          this._resizeConstraint.side / 2 - dotSize - dotSize * i * 2,
+          this._resizeConstraint.side / 2 - dotSize,
+          dotRadius,
+          0,
+          Math.PI * 2);
+        this._ctx.fill();
+
+        this._ctx.beginPath();
+        this._ctx.arc(
+          (-this._resizeConstraint.side / 2) - dotRadius,
+          this._resizeConstraint.side / 2 - dotSize * i * 2 - dotSize,
+          dotRadius,
+          0,
+          Math.PI * 2);
+        this._ctx.fill();
+      }
+
       // Параметры текста
       this._ctx.fillStyle = '#fff';
       this._ctx.font = '1.5em "Open Sans", Arial, sans-serif';
@@ -153,13 +206,6 @@
         0,
         (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2);
 
-      // Отрисовка прямоугольника, обозначающего область изображения после
-      // кадрирования. Координаты задаются от центра.
-      this._ctx.strokeRect(
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2);
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы

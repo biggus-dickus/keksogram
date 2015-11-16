@@ -98,7 +98,7 @@
       this._ctx.lineDashOffset = 7;
 
       // Сохранение состояния канваса.
-      // Подробней см. строку 132.
+      // Подробней см. строку 159.
       this._ctx.save();
 
       // Установка начальной точки системы координат в центр холста.
@@ -110,6 +110,48 @@
       // нужно отрисовать и координаты его верхнего левого угла.
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
+
+      // Отрисовка внешнего контура окружающей полупрозрачной области.
+      this._ctx.beginPath();
+      this._ctx.moveTo(-this._container.width / 2, -this._container.height / 2);
+      this._ctx.lineTo(this._container.width, -this._container.height / 2);
+      this._ctx.lineTo(this._container.width, this._container.height);
+      this._ctx.lineTo(-this._container.width / 2, this._container.height);
+      this._ctx.lineTo(-this._container.width / 2, -this._container.height / 2);
+
+      // Отрисовка внутреннего контура полупрозрачной области.
+      this._ctx.moveTo(
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2);
+      this._ctx.lineTo(
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        (this._resizeConstraint.side / 2) - this._ctx.lineWidth);
+      this._ctx.lineTo(
+        (this._resizeConstraint.side / 2) - this._ctx.lineWidth,
+        (this._resizeConstraint.side / 2) - this._ctx.lineWidth);
+      this._ctx.lineTo(
+        (this._resizeConstraint.side / 2) - this._ctx.lineWidth,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2);
+      this._ctx.lineTo(
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2);
+
+      this._ctx.closePath();
+
+      // Заливка окружающей полупрозрачной области.
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      this._ctx.fill();
+
+      // Параметры текста
+      this._ctx.fillStyle = '#fff';
+      this._ctx.font = '1.5em "Open Sans", Arial, sans-serif';
+      this._ctx.textAlign = 'center';
+
+      // Отрисовка текста (данные о ширине и высоте изображения в пикселях)
+      this._ctx.fillText(
+        this._image.naturalWidth + ' × ' + this._image.naturalHeight,
+        0,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2);
 
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.

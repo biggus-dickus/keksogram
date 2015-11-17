@@ -156,7 +156,7 @@
       var dotRadius = dotSize / 2;
       this._ctx.fillStyle = '#ffe753';
 
-      for(var i = 0; i < dotNumber; i++) {
+      for (var i = 0; i < dotNumber; i++) {
       // В цикле рисуем 4 стороны квадрата с круглой обводкой
         this._ctx.beginPath();
         this._ctx.arc(

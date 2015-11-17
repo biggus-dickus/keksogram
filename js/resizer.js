@@ -38,7 +38,8 @@
       this._resizeConstraint = new Square(
           this._container.width / 2 - side / 2,
           this._container.height / 2 - side / 2,
-          side);
+          side
+        );
 
       // Отрисовка изначального состояния канваса.
       this.redraw();
@@ -98,7 +99,7 @@
       this._ctx.lineDashOffset = 7;
 
       // Сохранение состояния канваса.
-      // Подробней см. строку 210.
+      // Подробней см. строку 221.
       this._ctx.save();
 
       // Установка начальной точки системы координат в центр холста.
@@ -122,23 +123,28 @@
       // Отрисовка внутреннего контура полупрозрачной области.
       this._ctx.moveTo(
         (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2);
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2
+      );
       this._ctx.lineTo(
         (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-        (this._resizeConstraint.side / 2) - this._ctx.lineWidth);
+        (this._resizeConstraint.side / 2) - this._ctx.lineWidth
+      );
       this._ctx.lineTo(
         (this._resizeConstraint.side / 2) - this._ctx.lineWidth,
-        (this._resizeConstraint.side / 2) - this._ctx.lineWidth);
+        (this._resizeConstraint.side / 2) - this._ctx.lineWidth
+      );
       this._ctx.lineTo(
         (this._resizeConstraint.side / 2) - this._ctx.lineWidth,
-        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2);
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2
+      );
       this._ctx.lineTo(
         (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2);
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2
+      );
 
       this._ctx.closePath();
 
-      // Заливка окружающей полупрозрачной области.
+      // Заливка полупрозрачной области.
       this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       this._ctx.fill();
 
@@ -146,11 +152,12 @@
       this._ctx.fillText(
         this._image.naturalWidth + ' × ' + this._image.naturalHeight,
         0,
-        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2);
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2
+      );
 
       /**
-      * Отрисовка области кадрирования с границей из точек.
-      */
+       * Отрисовка области кадрирования с границей из точек.
+       */
       var dotSize = 6; // размер такой же, как у прежней штрихованной рамки
       var dotNumber = this._resizeConstraint.side / dotSize / 2;
       var dotRadius = dotSize / 2;
@@ -164,7 +171,8 @@
           (-this._resizeConstraint.side / 2) - dotRadius,
           dotRadius,
           0,
-          Math.PI * 2);
+          Math.PI * 2
+        );
         this._ctx.fill();
 
         this._ctx.beginPath();
@@ -173,7 +181,8 @@
           (-this._resizeConstraint.side / 2) - dotRadius + dotSize * i * 2,
           dotRadius,
           0,
-          Math.PI * 2);
+          Math.PI * 2
+        );
         this._ctx.fill();
 
         this._ctx.beginPath();
@@ -182,7 +191,8 @@
           this._resizeConstraint.side / 2 - dotSize,
           dotRadius,
           0,
-          Math.PI * 2);
+          Math.PI * 2
+        );
         this._ctx.fill();
 
         this._ctx.beginPath();
@@ -191,7 +201,8 @@
           this._resizeConstraint.side / 2 - dotSize * i * 2 - dotSize,
           dotRadius,
           0,
-          Math.PI * 2);
+          Math.PI * 2
+        );
         this._ctx.fill();
       }
 
@@ -204,8 +215,8 @@
       this._ctx.fillText(
         this._image.naturalWidth + ' × ' + this._image.naturalHeight,
         0,
-        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2);
-
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth * 2
+      );
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы

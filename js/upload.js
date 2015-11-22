@@ -112,7 +112,6 @@
     if ((+resizeX.value + +resizeSize.value) > currentResizer._image.naturalWidth || (+resizeY.value + +resizeSize.value) > currentResizer._image.naturalHeight) {
       resizeFwd.setAttribute('disabled', true);
       resizeFwd.classList.add('upload-form-controls-fwd--disabled');
-      confirm('Введенные значения должны быть заданы в пределах ширины и высоты загруженного изображения.');
       return false;
     } else {
       resizeFwd.removeAttribute('disabled');

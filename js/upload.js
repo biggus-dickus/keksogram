@@ -109,7 +109,10 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    if ((+resizeX.value + +resizeSize.value) > currentResizer._image.naturalWidth || (+resizeY.value + +resizeSize.value) > currentResizer._image.naturalHeight) {
+    if (
+        +resizeX.value + +resizeSize.value > currentResizer._image.naturalWidth ||
+        +resizeY.value + +resizeSize.value > currentResizer._image.naturalHeight
+      ) {
       resizeFwd.setAttribute('disabled', true);
       resizeFwd.classList.add('upload-form-controls-fwd--disabled');
       return false;
@@ -120,16 +123,10 @@
     }
   }
 
-  // Запускаем функцию проверки валидности при каждом изменении значений полей
-  resizeX.onchange = function() {
-    resizeFormIsValid();
-  };
-  resizeY.onchange = function() {
-    resizeFormIsValid();
-  };
-  resizeSize.onchange = function() {
-    resizeFormIsValid();
-  };
+  /// Запускаем функцию проверки валидности при каждом изменении значений полей
+  resizeX.onchange = resizeFormIsValid;
+  resizeY.onchange = resizeFormIsValid;
+  resizeSize.onchange = resizeFormIsValid;
 
   /**
    * @param {Action} action

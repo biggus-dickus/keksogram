@@ -68,14 +68,6 @@
   }
 
   /**
-   * Проверяет, валидны ли данные, в форме кадрирования.
-   * @return {boolean}
-   */
-  function resizeFormIsValid() {
-    return true;
-  }
-
-  /**
    * Форма загрузки изображения.
    * @type {HTMLFormElement}
    */
@@ -102,6 +94,39 @@
    * @type {HTMLElement}
    */
   var uploadMessage = document.querySelector('.upload-message');
+
+  /**
+   * Элементы формы, которые будут использоваться при валидации
+   * @type {HTMLElement}
+   */
+  var resizeX = resizeForm['resize-x'];
+  var resizeY = resizeForm['resize-y'];
+  var resizeSize = resizeForm['resize-size'];
+  var resizeFwd = resizeForm['resize-fwd'];
+
+   /**
+   * Проверяет, валидны ли данные, в форме кадрирования.
+   * @return {boolean}
+   */
+  function resizeFormIsValid() {
+    if (
+        +resizeX.value + +resizeSize.value > currentResizer._image.naturalWidth ||
+        +resizeY.value + +resizeSize.value > currentResizer._image.naturalHeight
+    ) {
+      resizeFwd.setAttribute('disabled', true);
+      resizeFwd.classList.add('upload-form-controls-fwd--disabled');
+      return false;
+    } else {
+      resizeFwd.removeAttribute('disabled');
+      resizeFwd.classList.remove('upload-form-controls-fwd--disabled');
+      return true;
+    }
+  }
+
+  /// Запускаем функцию проверки валидности при каждом изменении значений полей
+  resizeX.onchange = resizeFormIsValid;
+  resizeY.onchange = resizeFormIsValid;
+  resizeSize.onchange = resizeFormIsValid;
 
   /**
    * @param {Action} action

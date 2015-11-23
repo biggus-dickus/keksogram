@@ -224,6 +224,11 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+
+      // После ресайза обращаемся к нашей куке и добавляем ее в список классов картинки
+      // как выставленный в последний раз фильтр и, соответственно, переключаем радиокнопку.
+      filterImage.className = 'filter-image-preview ' + docCookies.getItem('filter');
+      filterForm['upload-' + docCookies.getItem('filter')].setAttribute('checked', true);
     }
   };
 
@@ -245,13 +250,19 @@
    */
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
-    var setFilter = document.querySelector('input[name="upload-filter"]').checked.value;
+    // Вычисляем время, прошедшее после ДР
     var lastBirthday = new Date(2015, 9, 12);
     var daysPassed = +Date.now - +lastBirthday;
     var dateToExpire = +Date.now + daysPassed;
     var formattedDateToExpire = new Date(dateToExpire).toUTCString();
 
-    document.cookie = 'filter=' + setFilter + ';expires =' + formattedDateToExpire;
+    // Запоминаем класс фильтра, который добавляется в список классов изображения
+    // из нижеследующей функции, обращаемся к его классу, превращаем строковой тип
+    // в массив из двух значений методом split и берем второе значение.
+    var defaultFilter = filterImage.className.split(' ')[1];
+
+    // Записываем полученное значение в куку и задаем ей вычисленный выше срок жизни.
+    document.cookie = 'filter=' + defaultFilter + ';expires =' + formattedDateToExpire;
 
     cleanupResizer();
     updateBackground();

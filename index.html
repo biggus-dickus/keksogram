@@ -4,7 +4,6 @@
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Open+Sans&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="css/main.css">
 	<meta charset="utf-8">
-  <script src="vendor/cookies.js"></script>
 	<title>Keksogram</title>
 </head>
 <body>
@@ -48,7 +47,7 @@
 		</form>
 
 		<form class="upload-form upload-filter invisible" id="upload-filter" method="post" enctype="multipart/form-data">
-			<img src="" class="filter-image-preview" />
+			<img src="" class="filter-image-preview">
 
 			<input type="text" class="invisible" name="filter-image-src" id="filter-image-src">
 
@@ -101,6 +100,7 @@
 		</a>
 	</template>
 
+  <script src="vendor/cookies.js"></script>
   <script src="js/resizer.js"></script>
 	<script src="js/upload.js"></script>
 

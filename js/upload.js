@@ -112,7 +112,7 @@
     if (
         +resizeX.value + +resizeSize.value > currentResizer._image.naturalWidth ||
         +resizeY.value + +resizeSize.value > currentResizer._image.naturalHeight
-      ) {
+    ) {
       resizeFwd.setAttribute('disabled', true);
       resizeFwd.classList.add('upload-form-controls-fwd--disabled');
       return false;

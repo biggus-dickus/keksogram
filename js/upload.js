@@ -105,11 +105,14 @@
   var resizeFwd = resizeForm['resize-fwd'];
 
    /**
-   * Проверяет, валидны ли данные, в форме кадрирования.
+   * Проверяет, валидны ли данные в форме кадрирования.
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    if ((+resizeX.value + +resizeSize.value) > currentResizer._image.naturalWidth || (+resizeY.value + +resizeSize.value) > currentResizer._image.naturalHeight) {
+    if (
+        +resizeX.value + +resizeSize.value > currentResizer._image.naturalWidth ||
+        +resizeY.value + +resizeSize.value > currentResizer._image.naturalHeight
+      ) {
       resizeFwd.setAttribute('disabled', true);
       resizeFwd.classList.add('upload-form-controls-fwd--disabled');
       return false;
@@ -121,15 +124,9 @@
   }
 
   // Запускаем функцию проверки валидности при каждом изменении значений полей
-  resizeX.onchange = function() {
-    resizeFormIsValid();
-  };
-  resizeY.onchange = function() {
-    resizeFormIsValid();
-  };
-  resizeSize.onchange = function() {
-    resizeFormIsValid();
-  };
+  resizeX.onchange = resizeFormIsValid;
+  resizeY.onchange = resizeFormIsValid;
+  resizeSize.onchange = resizeFormIsValid;
 
   /**
    * @param {Action} action
@@ -248,6 +245,13 @@
    */
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
+    var setFilter = document.querySelector('input[name="upload-filter"]').checked.value;
+    var lastBirthday = new Date(2015, 9, 12);
+    var daysPassed = +Date.now - +lastBirthday;
+    var dateToExpire = +Date.now + daysPassed;
+    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
+
+    document.cookie = 'filter=' + setFilter + ';expires =' + formattedDateToExpire;
 
     cleanupResizer();
     updateBackground();

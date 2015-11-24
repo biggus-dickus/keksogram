@@ -251,13 +251,15 @@
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
     // Вычисляем время, прошедшее после ДР
-    var lastBirthday = new Date(2015, 9, 12);
-    var daysPassed = +Date.now - +lastBirthday;
-    var dateToExpire = +Date.now + daysPassed;
+    var lastBirthday = new Date();
+    lastBirthday.setMonth(9);
+    lastBirthday.setDate(12);
+    var daysPassed = +Date.now() - +lastBirthday;
+    var dateToExpire = +Date.now() + daysPassed;
     var formattedDateToExpire = new Date(dateToExpire).toUTCString();
 
     // Запоминаем класс фильтра, который добавляется в список классов изображения
-    // из нижеследующей функции, обращаемся к его классу, превращаем строковой тип
+    // из функции ниже, обращаемся к его классу, превращаем строковой тип
     // в массив из двух значений методом split и берем второе значение.
     var defaultFilter = filterImage.className.split(' ')[1];
 

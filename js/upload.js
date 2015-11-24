@@ -250,17 +250,17 @@
    */
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
+
     // Вычисляем время, прошедшее после ДР
-    var currentYear = new Date().getFullYear;
-    var lastBirthday = new Date();
-    lastBirthday.setMonth(9);
-    lastBirthday.setDate(12);
-    // Проверяем, что ДР не больше текущей даты и при необходимости отнимаем год
-    if (lastBirthday.getFullYear() > currentYear) {
-      lastBirthday.setFullYear(currentYear - 1);
+    var currentYear = new Date().getFullYear();
+    var recentBirthday = new Date(currentYear, 9, 12);
+
+    // Проверяем, что ДР не больше текущей даты, и при необходимости отнимаем год
+    if (+recentBirthday >= +Date.now()) {
+      recentBirthday.setFullYear(currentYear - 1);
     }
 
-    var daysPassed = +Date.now() - +lastBirthday;
+    var daysPassed = +Date.now() - +recentBirthday;
     var dateToExpire = +Date.now() + daysPassed;
     var formattedDateToExpire = new Date(dateToExpire).toUTCString();
 

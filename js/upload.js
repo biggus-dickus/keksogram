@@ -105,7 +105,7 @@
   var resizeFwd = resizeForm['resize-fwd'];
 
    /**
-   * Проверяет, валидны ли данные, в форме кадрирования.
+   * Проверяет, валидны ли данные в форме кадрирования.
    * @return {boolean}
    */
   function resizeFormIsValid() {
@@ -123,7 +123,7 @@
     }
   }
 
-  /// Запускаем функцию проверки валидности при каждом изменении значений полей
+  // Запускаем функцию проверки валидности при каждом изменении значений полей
   resizeX.onchange = resizeFormIsValid;
   resizeY.onchange = resizeFormIsValid;
   resizeSize.onchange = resizeFormIsValid;
@@ -224,6 +224,11 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+
+      // После ресайза обращаемся к нашей куке и добавляем ее в список классов картинки
+      // как выставленный в последний раз фильтр и, соответственно, переключаем радиокнопку.
+      filterImage.className = 'filter-image-preview ' + docCookies.getItem('filter');
+      filterForm['upload-' + docCookies.getItem('filter')].setAttribute('checked', true);
     }
   };
 
@@ -245,6 +250,27 @@
    */
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
+
+    // Вычисляем время, прошедшее после ДР
+    var currentYear = new Date().getFullYear();
+    var recentBirthday = new Date(currentYear, 9, 12);
+
+    // Проверяем, что ДР не больше текущей даты, и при необходимости отнимаем год
+    if (+recentBirthday >= +Date.now()) {
+      recentBirthday.setFullYear(currentYear - 1);
+    }
+
+    var daysPassed = +Date.now() - +recentBirthday;
+    var dateToExpire = +Date.now() + daysPassed;
+    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
+
+    // Запоминаем класс фильтра, который добавляется в список классов изображения
+    // из функции ниже, обращаемся к его классу, превращаем строковой тип
+    // в массив из двух значений методом split и берем второе значение.
+    var defaultFilter = filterImage.className.split(' ')[1];
+
+    // Записываем полученное значение в куку и задаем ей вычисленный выше срок жизни.
+    document.cookie = 'filter=' + defaultFilter + ';expires =' + formattedDateToExpire;
 
     cleanupResizer();
     updateBackground();

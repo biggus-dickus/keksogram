@@ -43,21 +43,23 @@
     var imageLoadTimeout = setTimeout(function() {
       requestedPic.src = ''; // Прекращаем загрузку
       element.classList.add('picture-load-failure'); // Показываем ошибку
+      element.href = '#';
     }, IMAGE_TIMEOUT);
 
     requestedPic.onload = function() {
       clearTimeout(imageLoadTimeout);
       element.replaceChild(requestedPic, currentImg);
+      element.href = requestedPic.src;
     };
 
     // Обработка ошибки сервера
     requestedPic.onerror = function() {
       element.classList.add('picture-load-failure');
+      element.href = '#';
     };
 
     // Изменение src у изображения начинает загрузку.
     requestedPic.src = data.url;
-    element.href = requestedPic.src;
 
     return element;
   }

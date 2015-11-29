@@ -1,3 +1,4 @@
+/* global pictures: true */
 'use strict';
 
 (function() {

@@ -39,24 +39,29 @@
     var currentImg = element.querySelector('img');
     var requestedPic = new Image(182, 182);
 
-    // Установка таймаута на загрузку изображения.
-    var imageLoadTimeout = setTimeout(function() {
-      requestedPic.src = ''; // Прекращаем загрузку
-      element.classList.add('picture-load-failure'); // Показываем ошибку
-      element.href = '#';
-    }, IMAGE_TIMEOUT);
+    // До загрузки картинки будет отображаться иконка-спиннер.
+    element.classList.add('picture-load-process');
 
+    var showLoadingError = function() {
+      requestedPic.src = '';
+      element.classList.remove('picture-load-process');
+      element.classList.add('picture-load-failure');
+      element.href = '#';
+    };
+
+    // Установка таймаута на загрузку изображения.
+    var imageLoadTimeout = setTimeout(showLoadingError, IMAGE_TIMEOUT);
+
+    // Отмена таймаута при загрузке и замена картинок.
     requestedPic.onload = function() {
       clearTimeout(imageLoadTimeout);
+      element.classList.remove('picture-load-process');
       element.replaceChild(requestedPic, currentImg);
       element.href = requestedPic.src;
     };
 
     // Обработка ошибки сервера
-    requestedPic.onerror = function() {
-      element.classList.add('picture-load-failure');
-      element.href = '#';
-    };
+    requestedPic.onerror = showLoadingError;
 
     // Изменение src у изображения начинает загрузку.
     requestedPic.src = data.url;

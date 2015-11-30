@@ -21,6 +21,7 @@ body {
   position: relative;
 }
 
+template,
 .invisible {
   display: none;
 }
@@ -356,14 +357,24 @@ input[type=radio]:checked + .upload-filter-label {
   margin-right: 600px;
 }
 
-.picture-load-failure {
-  background: url('../img/icon-cross.png') no-repeat center;
+.picture-load-failure,
+.picture-load-process {
   border: solid 1px rgba(255, 255, 255, 0.2);
   opacity: 0.3;
   line-height: 182px;
 }
 
-.picture-load-failure img {
+.picture-load-failure {
+  background: url('../img/icon-cross.png') no-repeat center;
+}
+
+.picture-load-process {
+  background: url('../img/loading.svg') no-repeat center;
+  background-size: 50px 50px;
+}
+
+.picture-load-failure img,
+.picture-load-process img {
   display: none;
   height: 182px;
   width: 182px;
@@ -380,6 +391,10 @@ input[type=radio]:checked + .upload-filter-label {
 
 .picture:hover .picture-stats {
   display: inline-block;
+}
+
+.picture-load-process:hover .picture-stats {
+  display: none;
 }
 
 .picture-load-failure .picture-stats {
@@ -496,7 +511,7 @@ input[type=radio]:checked + .upload-filter-label {
 }
 
 .likes-count {
-  cursor: pointre;
+  cursor: pointer;
 }
 
 .likes-count:before {

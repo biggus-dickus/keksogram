@@ -69,10 +69,11 @@
 
 
   // Функция выгрузки данных по AJAX из pictures.json.
+  // Note to self: указывать ссылку надо ОТНОСИТЕЛЬНО INDEX.HTML!!!
   function getPictures() {
     var xhr = new XMLHttpRequest();
     xhr.timeout = 10000;
-    xhr.open('GET', '../data/pictures.json');
+    xhr.open('GET', 'data/pictures.json');
 
     // Пока идет загрузка, показываем прелоадер.
     container.classList.add('pictures-loading');

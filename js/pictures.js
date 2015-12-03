@@ -47,9 +47,7 @@
     var filteredPictures = pictures.slice(0);
     switch (id) {
       case ('filter-popular'):
-        filteredPictures = filteredPictures.sort(function(a, b) {
-          return b.likes - a.likes;
-        });
+        filteredPictures;
         break;
 
       case ('filter-new'):

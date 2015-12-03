@@ -1,23 +1,117 @@
-/* global pictures: true */
 'use strict';
 
 (function() {
-  var filters = document.querySelector('.filters');
+  var filterForm = document.querySelector('.filters');
+  var filters = document.querySelectorAll('.filters-radio');
+  var activeFilter = 'filter-popular';
   var container = document.querySelector('.pictures');
+  var pictures = [];
 
-  // Прячем блок с фильтрами
-  filters.classList.add('hidden');
+  // Прячем блок с фильтрами на время загрузки.
+  filterForm.classList.add('hidden');
+
+  // Установка фильтра и сортировка при клике.
+  for (var i = 0; i < filters.length; i++) {
+    filters[i].onclick = function(evt) {
+      var clickedElementID = evt.target.id;
+      setActiveFilter(clickedElementID);
+    };
+  }
+
+  // Грузим картинки по Ajax. Магия хойстинга.
+  getPictures();
+
 
   // Перебираем элементы в структуре данных, для ускорения отрисовки пользуемся
-  // documentFragment
-  pictures.forEach(function(picture) {
+  // documentFragment.
+  function renderPictures(picturesToRender) {
+    container.innerHTML = '';
     var fragment = document.createDocumentFragment();
-    var element = getElementFromTemplate(picture);
-    fragment.appendChild(element);
-    container.appendChild(fragment);
-  });
 
-  // Создание DOM-элемента на основе шаблона
+    picturesToRender.forEach(function(picture) {
+      var element = getElementFromTemplate(picture);
+      fragment.appendChild(element);
+    });
+
+    container.appendChild(fragment);
+  }
+
+  // Функция сортировки.
+  function setActiveFilter(id, force) {
+    // Предотвращение повторной установки одного и того же фильтра.
+    if (activeFilter === id && !force) {
+      return;
+    }
+
+    // Сортировка элементов массива по выбранному фильтру.
+    var filteredPictures = pictures.slice(0);
+    switch (id) {
+      case ('filter-popular'):
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return b.likes - a.likes;
+        });
+        break;
+
+      case ('filter-new'):
+        // 3 месяца назад - это ~90 дней, и нафиг календарную точность:)
+        var threeMonthsAgo = +Date.now() - 90 * 24 * 60 * 60 * 1000;
+
+        filteredPictures = filteredPictures.filter(function(item) {
+          return Date.parse(item.date) > threeMonthsAgo.valueOf();
+        });
+        break;
+
+      case ('filter-discussed'):
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return b.comments - a.comments;
+        });
+        break;
+    }
+
+    renderPictures(filteredPictures);
+    activeFilter = id;
+  }
+
+
+  // Функция выгрузки данных по AJAX из pictures.json.
+  function getPictures() {
+    var xhr = new XMLHttpRequest();
+    xhr.timeout = 10000;
+    xhr.open('GET', '../data/pictures.json');
+
+    // Пока идет загрузка, показываем прелоадер.
+    container.classList.add('pictures-loading');
+
+    // Если подключение не произошло, выдаем сообщение об ошибке.
+    var showError = function() {
+      container.classList.remove('pictures-loading');
+      container.classList.add('pictures-failure');
+    };
+
+    xhr.ontimeout = showError;
+    xhr.onerror = showError;
+
+    // Обрабатываем загруженные данные.
+    xhr.onload = function(evt) {
+      var rawData = evt.target.response;
+      var loadedPictures = JSON.parse(rawData);
+
+      container.classList.remove('pictures-loading');
+      updateLoadedPictures(loadedPictures);
+    };
+
+    xhr.send();
+  }
+
+  // Сохранение выгруженного списка в pictures согласно выставленному фильтру.
+  function updateLoadedPictures(loadedPictures) {
+    pictures = loadedPictures;
+
+    setActiveFilter(activeFilter, true);
+  }
+
+
+  // Создание DOM-элемента на основе шаблона.
   function getElementFromTemplate(data) {
     var IMAGE_TIMEOUT = 10000;
     var template = document.querySelector('#picture-template');
@@ -68,6 +162,7 @@
 
     return element;
   }
-  // Снова показываем блок с фильтрами
-  filters.classList.remove('hidden');
+
+  // Снова показываем блок с фильтрами.
+  filterForm.classList.remove('hidden');
 })();

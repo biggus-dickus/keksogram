@@ -45,13 +45,15 @@
 
     // Сортировка элементов массива по выбранному фильтру.
     var filteredPictures = pictures.slice(0);
-    switch (id) {
 
+    switch (id) {
       case ('filter-new'):
         // 3 месяца назад - это ~90 дней, и нафиг календарную точность:)
         var threeMonthsAgo = +Date.now() - 90 * 24 * 60 * 60 * 1000;
 
-        filteredPictures = filteredPictures.filter(function(item) {
+        filteredPictures = filteredPictures.sort(function(a, b) {
+          return b.date - a.date;
+        }).filter(function(item) {
           return Date.parse(item.date) > threeMonthsAgo.valueOf();
         });
         break;

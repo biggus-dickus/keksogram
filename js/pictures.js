@@ -46,9 +46,6 @@
     // Сортировка элементов массива по выбранному фильтру.
     var filteredPictures = pictures.slice(0);
     switch (id) {
-      case ('filter-popular'):
-        filteredPictures;
-        break;
 
       case ('filter-new'):
         // 3 месяца назад - это ~90 дней, и нафиг календарную точность:)

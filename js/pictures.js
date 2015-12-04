@@ -87,6 +87,7 @@
     };
 
     xhr.ontimeout = showError;
+    xhr.onerror = showError;
 
     // Обрабатываем загруженные данные.
     xhr.onload = function(evt) {

@@ -51,10 +51,10 @@
         // 3 месяца назад - это ~90 дней, и нафиг календарную точность:)
         var threeMonthsAgo = +Date.now() - 90 * 24 * 60 * 60 * 1000;
 
-        filteredPictures = filteredPictures.sort(function(a, b) {
-          return b.date - a.date;
-        }).filter(function(item) {
+        filteredPictures = filteredPictures.filter(function(item) {
           return Date.parse(item.date) > threeMonthsAgo.valueOf();
+        }).sort(function(a, b) {
+          return Date.parse(b.date) - Date.parse(a.date);
         });
         break;
 

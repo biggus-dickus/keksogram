@@ -87,15 +87,19 @@
     };
 
     xhr.ontimeout = showError;
-    xhr.onerror = showError;
 
     // Обрабатываем загруженные данные.
     xhr.onload = function(evt) {
-      var rawData = evt.target.response;
-      var loadedPictures = JSON.parse(rawData);
+      if (evt.target.status >= 200 || evt.target.status < 300) {
+        var rawData = evt.target.response;
+        var loadedPictures = JSON.parse(rawData);
 
-      container.classList.remove('pictures-loading');
-      updateLoadedPictures(loadedPictures);
+        container.classList.remove('pictures-loading');
+        updateLoadedPictures(loadedPictures);
+      } else {
+        showError();
+        return;
+      }
     };
 
     xhr.send();

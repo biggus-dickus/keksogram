@@ -90,7 +90,7 @@
 
     // Обрабатываем загруженные данные.
     xhr.onload = function(evt) {
-      if (evt.target.status >= 200 || evt.target.status < 300) {
+      if (evt.target.status <= 300) {
         var rawData = evt.target.response;
         var loadedPictures = JSON.parse(rawData);
 

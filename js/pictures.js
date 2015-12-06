@@ -2,21 +2,52 @@
 
 (function() {
   var filterForm = document.querySelector('.filters');
-  var filters = document.querySelectorAll('.filters-radio');
   var activeFilter = 'filter-popular';
   var container = document.querySelector('.pictures');
   var pictures = [];
+  var filteredPictures = [];
+  var currentPage = 0;
+  var PAGE_SIZE = 12;
+  var SCROLL_TIMEOUT = 100;
+  var scrollTimeout;
 
   // Прячем блок с фильтрами на время загрузки.
   filterForm.classList.add('hidden');
 
-  // Установка фильтра и сортировка при клике.
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onclick = function(evt) {
-      var clickedElementID = evt.target.id;
-      setActiveFilter(clickedElementID);
-    };
+  // Установка фильтра и сортировка при клике. Более лучший(-: клик через делегирование.
+  // Добавляем также функцию addPageOnScroll, иначе по клику на фильтр
+  // на больших разрешениях выводится только 12 фотографий.
+  filterForm.addEventListener('click', function(evt) {
+    var clickedElement = evt.target;
+    if (clickedElement.classList.contains('filters-radio')) {
+      setActiveFilter(clickedElement.id);
+      addPageOnScroll();
+    }
+  });
+
+  // Выводим по 12 картинок по скроллу страницы.
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(addPageOnScroll, SCROLL_TIMEOUT);
+  });
+
+  // Если 12 картинок помещаются на странице, используем ф-ю addPageOnScroll() еще и на событии 'load'
+  // (адаптация для больших разрешений).
+  window.addEventListener('load', addPageOnScroll);
+
+  function addPageOnScroll() {
+    var bodyCurrentHeight = document.documentElement.offsetHeight;
+    var picturesCoordinates = document.querySelector('.pictures').getBoundingClientRect();
+
+    // Т.к. футера в разметке нет, проверяем, превышает ли сумма высоты окна
+    // и прокрученных пикселей высоту блока с картинками.
+    if (picturesCoordinates.height <= bodyCurrentHeight + window.scrollY) {
+      if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
+        renderPictures(filteredPictures, ++currentPage);
+      }
+    }
   }
+
 
   // Грузим картинки по Ajax. Магия хойстинга.
   getPictures();
@@ -24,11 +55,17 @@
 
   // Перебираем элементы в структуре данных, для ускорения отрисовки пользуемся
   // documentFragment.
-  function renderPictures(picturesToRender) {
-    container.innerHTML = '';
-    var fragment = document.createDocumentFragment();
+  function renderPictures(picturesToRender, pageNumber, replace) {
+    if (replace) {
+      container.innerHTML = '';
+    }
 
-    picturesToRender.forEach(function(picture) {
+    var fragment = document.createDocumentFragment();
+    var from = pageNumber * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var picsOnPage = picturesToRender.slice(from, to);
+
+    picsOnPage.forEach(function(picture) {
       var element = getElementFromTemplate(picture);
       fragment.appendChild(element);
     });
@@ -44,12 +81,13 @@
     }
 
     // Сортировка элементов массива по выбранному фильтру.
-    var filteredPictures = pictures.slice(0);
+    filteredPictures = pictures.slice(0);
 
     switch (id) {
       case ('filter-new'):
-        // 3 месяца назад - это ~90 дней, и нафиг календарную точность:)
-        var threeMonthsAgo = +Date.now() - 90 * 24 * 60 * 60 * 1000;
+        var threeMonthsAgo = new Date();
+        // Отнимаем от месяца текущей даты три месяца.
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
         filteredPictures = filteredPictures.filter(function(item) {
           return Date.parse(item.date) > threeMonthsAgo.valueOf();
@@ -65,7 +103,10 @@
         break;
     }
 
-    renderPictures(filteredPictures);
+    // Вывод отфильтрованного массива. Флаг true отвечает за чистку контейнера.
+    // (условие для replace в renderPictures();). Обязательно сбрасываем счетчик.
+    currentPage = 0;
+    renderPictures(filteredPictures, currentPage, true);
     activeFilter = id;
   }
 

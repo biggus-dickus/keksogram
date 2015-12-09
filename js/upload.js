@@ -123,9 +123,6 @@
     }
   }
 
-  // Запускаем функцию проверки валидности при изменении значения любого поля.
-  resizeForm.addEventListener('change', resizeFormIsValid);
-
   /**
    * @param {Action} action
    * @param {string=} message
@@ -206,16 +203,18 @@
   /**
    * Обработчик события 'resizerchange' на объекте window.
    * @param {Event} resizerсhange
-   * @param {Event} evt
+   * @param {function} getResizerData
    */
   window.addEventListener('resizerchange', getResizerData);
 
   /**
-   * Синхронизация изменения значений полей resizeForm с габаритами окна кадрирования.
+   * Синхронизация изменения значений полей resizeForm с габаритами окна кадрирования
+   * и валидация формы.
    * @param {Event} change
    */
   resizeForm.addEventListener('change', function() {
     currentResizer.setConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
+    resizeFormIsValid();
   });
 
   /**

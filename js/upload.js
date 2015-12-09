@@ -195,9 +195,9 @@
   // сторона в пикселях) и их записи в поля формы resizeForm.
   function getResizerData() {
     var currentResizerData = currentResizer.getConstraint();
-    resizeX.value = currentResizerData.x;
-    resizeY.value = currentResizerData.y;
-    resizeSize.value = currentResizerData.side;
+    resizeX.value = Math.floor(currentResizerData.x);
+    resizeY.value = Math.floor(currentResizerData.y);
+    resizeSize.value = Math.floor(currentResizerData.side);
   }
 
   /**
@@ -206,6 +206,10 @@
    * @param {function} getResizerData
    */
   window.addEventListener('resizerchange', getResizerData);
+
+  // Для улучшения UX валидируем форму еще и на клавиатурных событиях
+  // (по отпускании кнопки).
+  resizeForm.addEventListener('keyup', resizeFormIsValid);
 
   /**
    * Синхронизация изменения значений полей resizeForm с габаритами окна кадрирования
@@ -240,7 +244,7 @@
   resizeForm.addEventListener('submit', function(evt) {
     evt.preventDefault();
 
-    if (resizeFormIsValid()) {
+    if (resizeFormIsValid) {
       filterImage.src = currentResizer.exportImage().src;
 
       resizeForm.classList.add('invisible');
@@ -248,8 +252,15 @@
 
       // После ресайза обращаемся к нашей куке и добавляем ее в список классов картинки
       // как выставленный в последний раз фильтр и, соответственно, переключаем радиокнопку.
-      filterImage.className = 'filter-image-preview ' + docCookies.getItem('filter');
-      filterForm['upload-' + docCookies.getItem('filter')].setAttribute('checked', true);
+      var filterFromCookie = docCookies.getItem('filter');
+
+      if (filterFromCookie) {
+        filterImage.className = 'filter-image-preview ' + filterFromCookie;
+        filterForm['upload-' + filterFromCookie].setAttribute('checked', true);
+      } else {
+        filterImage.className = 'filter-image-preview filter-none';
+        filterForm['upload-filter-none'].setAttribute('checked', true);
+      }
     }
   });
 

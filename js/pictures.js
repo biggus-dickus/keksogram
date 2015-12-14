@@ -1,4 +1,4 @@
-/* global Photo: true */
+/* global Photo: true, Gallery: true */
 
 'use strict';
 
@@ -12,6 +12,7 @@
   var PAGE_SIZE = 12;
   var SCROLL_TIMEOUT = 100;
   var scrollTimeout;
+  var gallery = new Gallery();
 
   // Прячем блок с фильтрами на время загрузки.
   filterForm.classList.add('hidden');
@@ -77,9 +78,18 @@
       var pic = new Photo(item);
       pic.render();
       fragment.appendChild(pic.element);
+
+      // Обработчик взаимодействия с фотографией: отслеживание клика.
+      pic.element.addEventListener('click', _onImageClick);
     });
 
     container.appendChild(fragment);
+  }
+
+  // Обработчик клика по картинке: показ галереи.
+  function _onImageClick(evt) {
+    evt.preventDefault();
+    gallery.show();
   }
 
   // Функция сортировки.

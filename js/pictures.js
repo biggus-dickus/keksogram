@@ -1,3 +1,5 @@
+/* global Photo: true */
+
 'use strict';
 
 (function() {
@@ -48,16 +50,20 @@
     }
   }
 
-
   // Грузим картинки по Ajax. Магия хойстинга.
   getPictures();
-
 
   // Перебираем элементы в структуре данных, для ускорения отрисовки пользуемся
   // documentFragment.
   function renderPictures(picturesToRender, pageNumber, replace) {
     if (replace) {
-      container.innerHTML = '';
+      // Очистка контейнера, если по фильтру кликнули, и, соответственно, replace = true.
+      var renderedElements = document.querySelectorAll('.picture');
+      // На коллекции renderedElements (недомассиве) используем метод forEach с помощью
+      // метода call, для чего создается обыкновенный пустой массив.
+      [].forEach.call(renderedElements, function(el) {
+        container.removeChild(el);
+      });
     }
 
     var fragment = document.createDocumentFragment();
@@ -65,9 +71,12 @@
     var to = from + PAGE_SIZE;
     var picsOnPage = picturesToRender.slice(from, to);
 
-    picsOnPage.forEach(function(picture) {
-      var element = getElementFromTemplate(picture);
-      fragment.appendChild(element);
+    // Выгрузка фотографий на страницу теперь осуществляется через объявление экземпляра
+    // Photo в цикле forEach и вызов у него метода render().
+    picsOnPage.forEach(function(item) {
+      var pic = new Photo(item);
+      pic.render();
+      fragment.appendChild(pic.element);
     });
 
     container.appendChild(fragment);
@@ -152,59 +161,6 @@
     pictures = loadedPictures;
 
     setActiveFilter(activeFilter, true);
-  }
-
-
-  // Создание DOM-элемента на основе шаблона.
-  function getElementFromTemplate(data) {
-    var IMAGE_TIMEOUT = 10000;
-    var template = document.querySelector('#picture-template');
-    var element;
-
-    // Адаптация функции для IE, где нет поддержки <template>
-    if ('content' in template) {
-      element = template.content.children[0].cloneNode(true);
-    } else {
-      element = template.children[0].cloneNode(true);
-    }
-
-    // Вывод количества лайков и комментариев:
-    element.querySelector('.picture-comments').textContent = data.comments;
-    element.querySelector('.picture-likes').textContent = data.likes;
-
-    // Объявляем переменные картинок: первая - заменяемый тэг в шаблоне,
-    // вторая - загружаемое с сервера изображение.
-    var currentImg = element.querySelector('img');
-    var requestedPic = new Image(182, 182);
-
-    // До загрузки картинки будет отображаться иконка-спиннер.
-    element.classList.add('picture-load-process');
-
-    var showLoadingError = function() {
-      requestedPic.src = '';
-      element.classList.remove('picture-load-process');
-      element.classList.add('picture-load-failure');
-      element.href = '#';
-    };
-
-    // Установка таймаута на загрузку изображения.
-    var imageLoadTimeout = setTimeout(showLoadingError, IMAGE_TIMEOUT);
-
-    // Отмена таймаута при загрузке и замена картинок.
-    requestedPic.onload = function() {
-      clearTimeout(imageLoadTimeout);
-      element.classList.remove('picture-load-process');
-      element.replaceChild(requestedPic, currentImg);
-      element.href = requestedPic.src;
-    };
-
-    // Обработка ошибки сервера
-    requestedPic.onerror = showLoadingError;
-
-    // Изменение src у изображения начинает загрузку.
-    requestedPic.src = data.url;
-
-    return element;
   }
 
   // Снова показываем блок с фильтрами.

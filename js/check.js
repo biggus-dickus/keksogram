@@ -1,9 +1,9 @@
 /**
- * @author Max Maslenko (biggus-dickus)
+ * Проверка типов загруженных файлов, приведение типов данных.
+ * @author Max Maslenko (lynchnost@gmail.com)
  */
 
 /**
- * Проверка типов загруженных файлов, приведение типов данных.
  * @param  {boolean|number|Object} a
  * @param  {boolean|number|Object} b
  * @return {string|number}

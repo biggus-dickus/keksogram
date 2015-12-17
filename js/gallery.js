@@ -1,6 +1,6 @@
 /**
- * @fileOverview Конструктор и прототипы объекта Галерея.
- * @author Max Maslenko (biggus-dickus)
+ * Конструктор и прототипы объекта Галерея.
+ * @author Max Maslenko (lynchnost@gmail.com)
  */
 
 'use strict';
@@ -20,7 +20,10 @@
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
   }
 
-  // Показ галереи
+  /**
+   * Показ галереи.
+   * @event Gallery#show
+   */
   Gallery.prototype.show = function() {
     this.element.classList.remove('invisible');
 
@@ -30,7 +33,10 @@
     document.addEventListener('keydown', this._onDocumentKeyDown);
   };
 
-  // Скрытие галереи и удаление обработчиков ее событий.
+  /**
+   * Скрытие галереи и удаление обработчиков ее событий.
+   * @event Gallery#hide
+   */
   Gallery.prototype.hide = function() {
     this.element.classList.add('invisible');
     this._closeButton.removeEventListener('click', this._onCloseClick);
@@ -41,12 +47,17 @@
   /**
    * Обработчики клика по крестику, нажатия на ESC и клика по фотографии.
    * @private
+   * @fires Gallery#hide
    */
   Gallery.prototype._onCloseClick = function() {
     this.hide();
   };
 
-  /** @private */
+  /**
+   *@private
+   *@param {Event} evt
+   *@fires Gallery#hide
+   */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     if (evt.keyCode === 27) {
       this.hide();

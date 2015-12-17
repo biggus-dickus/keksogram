@@ -1,6 +1,6 @@
 /**
- * @fileOverview Конструктор и прототипы объекта Фото.
- * @author Max Maslenko (biggus-dickus)
+ * Конструктор и прототипы объекта Фото.
+ * @author Max Maslenko (lynchnost@gmail.com)
  */
 
 'use strict';
@@ -17,9 +17,9 @@
   // Создание DOM-элемента на основе шаблона из списка pictures.json
   // теперь осуществляется через метод render() у прототипа объекта Photo.
   Photo.prototype.render = function() {
-    /** @constant {number} */
+    /** @constant {number} IMAGE_TIMEOUT */
     var IMAGE_TIMEOUT = 10000;
-    /** @type {HTMLElement} */
+    /** @var {HTMLElement} template */
     var template = document.querySelector('#picture-template');
 
     // Адаптация функции для IE, где нет поддержки <template>
@@ -36,8 +36,8 @@
     /**
      * Объявляем переменные картинок: первая - заменяемый тэг в шаблоне,
      * вторая - загружаемое с сервера изображение.
-     * @type {HTMLElement} currentImg
-     * @type {Image} requestedPic
+     * @var {HTMLElement} currentImg
+     * @var {Image} requestedPic
      */
     var currentImg = this.element.querySelector('img');
     var requestedPic = new Image(182, 182);

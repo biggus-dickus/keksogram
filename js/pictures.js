@@ -1,34 +1,34 @@
 /* global Photo: true, Gallery: true */
 
 /**
- * @fileOverview Модуль выгрузки картинок из data/pictures.json, обработки данных
+ * Модуль выгрузки картинок из data/pictures.json, обработки данных
  * и вывода на страницу с использованием <template>. Фильтрация картинок.
  * Обработчик кликов по фотографиям, показывающий галерею.
- * @author Max Maslenko (biggus-dickus)
+ * @author Max Maslenko (lynchnost@gmail.com)
  */
 
 'use strict';
 
 (function() {
-  /** @type {HTMLElement} */
+  /** @var {HTMLElement} filterForm */
   var filterForm = document.querySelector('.filters');
-  /** @type {string} */
+  /** @var {string} activeFilter */
   var activeFilter = 'filter-popular';
-  /** @type {HTMLElement} */
+  /** @var {HTMLElement} container */
   var container = document.querySelector('.pictures');
-  /** @type {Array.<string>} */
+  /** @var {Array.<string>} pictures */
   var pictures = [];
-  /** @type {Array.<string>} */
+  /** @var {Array.<string>} filteredPictures */
   var filteredPictures = [];
-  /** @type {number} */
+  /** @var {number} currentPage */
   var currentPage = 0;
-  /** @constant {number} */
+  /** @constant {number} PAGE_SIZE */
   var PAGE_SIZE = 12;
-  /** @constant {number} */
+  /** @constant {number} SCROLL_TIMEOUT */
   var SCROLL_TIMEOUT = 100;
-  /** @type {?number} */
+  /** @var {?number} scrollTimeout */
   var scrollTimeout;
-  /** @type {Gallery} */
+  /** @var {Gallery} gallery */
   var gallery = new Gallery();
 
   // Прячем блок с фильтрами на время загрузки.

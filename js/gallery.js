@@ -22,7 +22,7 @@
 
   /**
    * Показ галереи.
-   * @event Gallery#show
+   * @method show
    */
   Gallery.prototype.show = function() {
     this.element.classList.remove('invisible');
@@ -35,7 +35,7 @@
 
   /**
    * Скрытие галереи и удаление обработчиков ее событий.
-   * @event Gallery#hide
+   * @method hide
    */
   Gallery.prototype.hide = function() {
     this.element.classList.add('invisible');
@@ -47,7 +47,7 @@
   /**
    * Обработчики клика по крестику, нажатия на ESC и клика по фотографии.
    * @private
-   * @fires Gallery#hide
+   * @method hide
    */
   Gallery.prototype._onCloseClick = function() {
     this.hide();
@@ -56,7 +56,7 @@
   /**
    *@private
    *@param {Event} evt
-   *@fires Gallery#hide
+   *@method hide
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     if (evt.keyCode === 27) {

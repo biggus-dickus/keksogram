@@ -36,10 +36,10 @@
     /**
      * Объявляем переменные картинок: первая - заменяемый тэг в шаблоне,
      * вторая - загружаемое с сервера изображение.
-     * @var {HTMLElement} currentImg
-     * @var {Image} requestedPic
      */
+    /** @var {HTMLElement} currentImg */
     var currentImg = this.element.querySelector('img');
+    /** @var {Image} requestedPic */
     var requestedPic = new Image(182, 182);
 
     // До загрузки картинки будет отображаться иконка-спиннер.

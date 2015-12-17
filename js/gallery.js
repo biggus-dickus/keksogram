@@ -54,9 +54,9 @@
   };
 
   /**
-   *@private
-   *@param {Event} evt
-   *@method hide
+   * @private
+   * @method hide
+   * @param {Event} evt
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     if (evt.keyCode === 27) {

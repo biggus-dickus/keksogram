@@ -1,6 +1,14 @@
+/**
+ * @fileOverview Конструктор и прототипы объекта Галерея.
+ * @author Max Maslenko (biggus-dickus)
+ */
+
 'use strict';
 
 (function() {
+  /**
+   * @constructor
+   */
   function Gallery() {
     this.element = document.querySelector('.gallery-overlay');
     this._closeButton = document.querySelector('.gallery-overlay-close');
@@ -31,19 +39,21 @@
   };
 
   /**
-  * Обработчики клика по крестику, нажатия на ESC и клика по фотографии.
-  * @private
-  */
+   * Обработчики клика по крестику, нажатия на ESC и клика по фотографии.
+   * @private
+   */
   Gallery.prototype._onCloseClick = function() {
     this.hide();
   };
 
+  /** @private */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     if (evt.keyCode === 27) {
       this.hide();
     }
   };
 
+  /** @private */
   Gallery.prototype._onPhotoClick = function() {
     console.log('Обработчик клика по фотографии работает.');
   };

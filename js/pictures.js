@@ -1,25 +1,46 @@
 /* global Photo: true, Gallery: true */
 
+/**
+ * @fileOverview Модуль выгрузки картинок из data/pictures.json, обработки данных
+ * и вывода на страницу с использованием <template>. Фильтрация картинок.
+ * Обработчик кликов по фотографиям, показывающий галерею.
+ * @author Max Maslenko (biggus-dickus)
+ */
+
 'use strict';
 
 (function() {
+  /** @type {HTMLElement} */
   var filterForm = document.querySelector('.filters');
+  /** @type {string} */
   var activeFilter = 'filter-popular';
+  /** @type {HTMLElement} */
   var container = document.querySelector('.pictures');
+  /** @type {Array.<string>} */
   var pictures = [];
+  /** @type {Array.<string>} */
   var filteredPictures = [];
+  /** @type {number} */
   var currentPage = 0;
+  /** @constant {number} */
   var PAGE_SIZE = 12;
+  /** @constant {number} */
   var SCROLL_TIMEOUT = 100;
+  /** @type {?number} */
   var scrollTimeout;
+  /** @type {Gallery} */
   var gallery = new Gallery();
 
   // Прячем блок с фильтрами на время загрузки.
   filterForm.classList.add('hidden');
 
-  // Установка фильтра и сортировка при клике. Более лучший(-: клик через делегирование.
-  // Добавляем также функцию addPageOnScroll, иначе по клику на фильтр
-  // на больших разрешениях выводится только 12 фотографий.
+  /**
+   * Установка фильтра и сортировка при клике. Более лучший(-: клик через делегирование.
+   * Добавляем также функцию addPageOnScroll, иначе по клику на фильтр
+   * на больших разрешениях выводится только 12 фотографий.
+   * @param {Event} click
+   * @param {Event} evt
+   */
   filterForm.addEventListener('click', function(evt) {
     var clickedElement = evt.target;
     if (clickedElement.classList.contains('filters-radio')) {
@@ -54,8 +75,13 @@
   // Грузим картинки по Ajax. Магия хойстинга.
   getPictures();
 
-  // Перебираем элементы в структуре данных, для ускорения отрисовки пользуемся
-  // documentFragment.
+  /**
+   * Перебираем элементы в структуре данных, для ускорения отрисовки пользуемся
+   * documentFragment.
+   * @param  {Array.<string>} picturesToRender
+   * @param  {number} pageNumber
+   * @param  {boolean=} replace
+   */
   function renderPictures(picturesToRender, pageNumber, replace) {
     if (replace) {
       // Очистка контейнера, если по фильтру кликнули, и, соответственно, replace = true.
@@ -92,7 +118,11 @@
     gallery.show();
   }
 
-  // Функция сортировки.
+  /**
+   * Функция сортировки
+   * @param {string} id
+   * @param {boolean} force
+   */
   function setActiveFilter(id, force) {
     // Предотвращение повторной установки одного и того же фильтра.
     if (activeFilter === id && !force) {
@@ -166,7 +196,10 @@
     xhr.send();
   }
 
-  // Сохранение выгруженного списка в pictures согласно выставленному фильтру.
+  /**
+   * Сохранение выгруженного списка в pictures согласно выставленному фильтру.
+   * @param  {Object.<string, string|number>} loadedPictures
+   */
   function updateLoadedPictures(loadedPictures) {
     pictures = loadedPictures;
 

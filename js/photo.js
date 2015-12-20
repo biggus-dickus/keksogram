@@ -20,7 +20,7 @@
      */
     this._onPhotoClick = function(evt) {
       evt.preventDefault();
-      if(!this.element.classList.contains('picture-load-failure')) {
+      if (!this.element.classList.contains('picture-load-failure')) {
         if (typeof this.onClick === 'function') {
           this.onClick();
         }

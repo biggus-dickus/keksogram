@@ -71,7 +71,7 @@
     }
 
     // Нажатие на стрелку влево.
-    if(evt.keyCode === 37) {
+    if (evt.keyCode === 37) {
       if (this._currentImage === 0) {
         this._currentImage = this.pictures.length - 1;
         this.setCurrentPicture(this._currentImage);
@@ -81,7 +81,7 @@
     }
 
     // Нажатие на стрелку вправо.
-    if(evt.keyCode === 39) {
+    if (evt.keyCode === 39) {
       if (this._currentImage === this.pictures.length - 1) {
         this._currentImage = 0;
         this.setCurrentPicture(this._currentImage);

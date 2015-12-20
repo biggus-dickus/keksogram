@@ -13,11 +13,18 @@
     this.element = document.querySelector('.gallery-overlay');
     this._closeButton = document.querySelector('.gallery-overlay-close');
     this._image = document.querySelector('.gallery-overlay-image');
+    this._likes = document.querySelector('.likes-count');
+    this._comments = document.querySelector('.comments-count');
+    // Список изображений из json, изначально - пустой массив.
+    this.pictures = [];
+    // Индекс текущей картинки в галерее.
+    this._currentImage = 0;
 
     // Привязка контекста обработки событий мыши и клавиатуры
     // к объекту Gallery прямо в конструкторе.
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
+    this._onPhotoClick = this._onPhotoClick.bind(this);
   }
 
   /**
@@ -64,9 +71,43 @@
     }
   };
 
-  /** @private */
+  /**
+   * Получение списка фотографий из json для объекта Галереи.
+   * @param {Array.<Object>} pictures
+   * @method setPictures
+   */
+  Gallery.prototype.setPictures = function(pictures) {
+    this.pictures = pictures;
+  };
+
+  /**
+   * Установка текущей фотографии по ее индексу из json,
+   * получение данных о фотографии (кол-во лайков и комментов).
+   * @param {number} index
+   * @method setCurrentPicture
+   */
+  Gallery.prototype.setCurrentPicture = function(i) {
+    if (i <= this.pictures.length - 1) {
+      this._currentImage = i;
+      var currentPic = this.pictures[this._currentImage];
+      this._image.src = currentPic.url;
+      this._likes.textContent = currentPic.likes;
+      this._comments.textContent = currentPic.comments;
+    }
+  };
+
+  /**
+   * Обработчик клика по фотографии в галерее. Показывает следующую
+   * по порядку фотографию, если она есть.
+   * @private
+   */
   Gallery.prototype._onPhotoClick = function() {
-    console.log('Обработчик клика по фотографии работает.');
+    if (this.pictures[this._currentImage + 1]) {
+      this.setCurrentPicture(++this._currentImage);
+    } else {
+      this._currentImage = 0;
+      this._setCurrentPicture(this._currentImage);
+    }
   };
 
   window.Gallery = Gallery;

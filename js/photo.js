@@ -12,6 +12,20 @@
    */
   function Photo(data) {
     this._data = data;
+
+    /**
+     * Обработчик клика по картинке.
+     * @private
+     * @param {Event} evt
+     */
+    this._onPhotoClick = function(evt) {
+      evt.preventDefault();
+      if(!this.element.classList.contains('picture-load-failure')) {
+        if (typeof this.onClick === 'function') {
+          this.onClick();
+        }
+      }
+    }.bind(this);
   }
 
   // Создание DOM-элемента на основе шаблона из списка pictures.json
@@ -68,6 +82,17 @@
 
     // Изменение src у изображения начинает загрузку.
     requestedPic.src = this._data.url;
+
+    // В загруженные фотографии добавляется обработчик клика.
+    this.element.addEventListener('click', this._onPhotoClick);
+  };
+
+  /** @type {?Function} */
+  Photo.prototype.onClick = null;
+
+  // Удаление обработчика клика по фотографии.
+  Photo.prototype.remove = function() {
+    this.element.removeEventListener('click', this._onPhotoClick);
   };
 
   window.Photo = Photo;

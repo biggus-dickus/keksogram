@@ -12,6 +12,15 @@
    */
   function Photo(data) {
     this._data = data;
+    this.IMAGE_TIMEOUT = 10000;
+    this.template = document.querySelector('#picture-template');
+
+    // Адаптация функции для IE, где нет поддержки <template>
+    if ('content' in this.template) {
+      this.element = this.template.content.children[0].cloneNode(true);
+    } else {
+      this.element = this.template.children[0].cloneNode(true);
+    }
 
     /**
      * Обработчик клика по картинке.
@@ -31,18 +40,6 @@
   // Создание DOM-элемента на основе шаблона из списка pictures.json
   // теперь осуществляется через метод render() у прототипа объекта Photo.
   Photo.prototype.render = function() {
-    /** @constant {number} IMAGE_TIMEOUT */
-    var IMAGE_TIMEOUT = 10000;
-    /** @var {HTMLElement} template */
-    var template = document.querySelector('#picture-template');
-
-    // Адаптация функции для IE, где нет поддержки <template>
-    if ('content' in template) {
-      this.element = template.content.children[0].cloneNode(true);
-    } else {
-      this.element = template.children[0].cloneNode(true);
-    }
-
     // Вывод количества лайков и комментариев:
     this.element.querySelector('.picture-comments').textContent = this._data.comments;
     this.element.querySelector('.picture-likes').textContent = this._data.likes;
@@ -67,7 +64,7 @@
     }.bind(this);
 
     // Установка таймаута на загрузку изображения.
-    var imageLoadTimeout = setTimeout(showLoadingError, IMAGE_TIMEOUT);
+    var imageLoadTimeout = setTimeout(showLoadingError, this.IMAGE_TIMEOUT);
 
     // Отмена таймаута при загрузке и замена картинок.
     requestedPic.onload = function() {

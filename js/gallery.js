@@ -35,6 +35,7 @@
     this.element.classList.remove('invisible');
 
     // Отслеживание событий мыши и клавиатуры в отображенной галерее.
+    this.element.addEventListener('click', this._onCloseClick);
     this._closeButton.addEventListener('click', this._onCloseClick);
     this._image.addEventListener('click', this._onPhotoClick);
     document.addEventListener('keydown', this._onDocumentKeyDown);
@@ -48,16 +49,19 @@
     this.element.classList.add('invisible');
     this._closeButton.removeEventListener('click', this._onCloseClick);
     this._image.removeEventListener('click', this._onPhotoClick);
+    this.element.removeEventListener('click', this._onCloseClick);
     document.removeEventListener('keydown', this._onDocumentKeyDown);
   };
 
   /**
-   * Обработчики клика по крестику, нажатия на ESC и клика по фотографии.
+   * Обработчики клика по крестику, нажатия на ESC, клика по фону ("мимо") и по фотографии.
    * @private
    * @method hide
    */
-  Gallery.prototype._onCloseClick = function() {
-    this.hide();
+  Gallery.prototype._onCloseClick = function(evt) {
+    if (!evt.target.classList.contains('gallery-overlay-image')) {
+      this.hide();
+    }
   };
 
   /**
@@ -93,8 +97,8 @@
 
   /**
    * Получение списка фотографий из json для объекта Галереи.
-   * @param {Array.<Object>} pictures
    * @method setPictures
+   * @param {Array.<Object>} pictures
    */
   Gallery.prototype.setPictures = function(pictures) {
     this.pictures = pictures;
@@ -103,11 +107,11 @@
   /**
    * Установка текущей фотографии по ее индексу из json,
    * получение данных о фотографии (кол-во лайков и комментов).
-   * @param {number} index
    * @method setCurrentPicture
+   * @param {number} index
    */
   Gallery.prototype.setCurrentPicture = function(i) {
-    if (i <= this.pictures.length - 1) {
+    if (this.pictures && typeof this.pictures[i] === 'object') {
       this._currentImage = i;
       var currentPic = this.pictures[this._currentImage];
       this._image.src = currentPic.url;
@@ -119,14 +123,17 @@
   /**
    * Обработчик клика по фотографии в галерее. Показывает следующую
    * по порядку фотографию, если она есть.
+   * @method _onPhotoClick
    * @private
    */
-  Gallery.prototype._onPhotoClick = function() {
-    if (this.pictures[this._currentImage + 1]) {
-      this.setCurrentPicture(++this._currentImage);
-    } else {
-      this._currentImage = 0;
-      this._setCurrentPicture(this._currentImage);
+  Gallery.prototype._onPhotoClick = function(evt) {
+    if (evt.target.classList.contains('gallery-overlay-image')) {
+      if (this.pictures[this._currentImage + 1]) {
+        this.setCurrentPicture(++this._currentImage);
+      } else {
+        this._currentImage = 0;
+        this.setCurrentPicture(this._currentImage);
+      }
     }
   };
 

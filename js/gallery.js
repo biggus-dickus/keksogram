@@ -20,12 +20,22 @@
     // Индекс текущей картинки в галерее.
     this._currentImage = 0;
 
-    // Привязка контекста обработки событий мыши и клавиатуры
-    // к объекту Gallery в конструкторе.
+    // Привязка контекста обработки событий (мышь, клавиатура, изменения
+    // в адресной строке) к объекту Gallery в конструкторе.
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onPhotoClick = this._onPhotoClick.bind(this);
+    this._onHashChange = this._onHashChange.bind(this);
+
+    window.addEventListener('load', this._onHashChange);
+    window.addEventListener('hashchange', this._onHashChange);
   }
+
+  /**
+   * @private
+   * @member {string} _hash
+   */
+  Gallery.prototype._hash = null;
 
   /**
    * Показ галереи.
@@ -34,7 +44,7 @@
   Gallery.prototype.show = function() {
     this.element.classList.remove('invisible');
 
-    // От�леживание событий мыши и клавиатуры в отображенной галерее.
+    // Отслеживание событий мыши и клавиатуры в отображенной галерее.
     this.element.addEventListener('click', this._onCloseClick);
     this._closeButton.addEventListener('click', this._onCloseClick);
     this._image.addEventListener('click', this._onPhotoClick);
@@ -46,6 +56,7 @@
    * @method hide
    */
   Gallery.prototype.hide = function() {
+    location.hash = '';
     this.element.classList.add('invisible');
     this._closeButton.removeEventListener('click', this._onCloseClick);
     this._image.removeEventListener('click', this._onPhotoClick);
@@ -83,10 +94,12 @@
         break;
       // Стрелка влево.
       case 37:
+        this._setHash(this.pictures[--this._currentImage].url);
         this.setCurrentPicture(--this._currentImage);
         break;
       // Стрелка вправо.
       case 39:
+        this._setHash(this.pictures[++this._currentImage].url);
         this.setCurrentPicture(++this._currentImage);
         break;
     }
@@ -103,26 +116,46 @@
   };
 
   /**
+   * Проверка первого и последнего номера в массиве,
+   * должна сбрасывать счет.
+   * @param  {number} num
+   * @return {number} num
+   */
+  Gallery.prototype._checkPosition = function(num) {
+    var end = this.pictures.length - 1;
+
+    if (num < 0) {
+      num = end;
+    } else if (num > end) {
+      num = 0;
+    }
+    // return num;
+  };
+
+  /**
    * Установка текущей фотографии по ее индексу из json,
    * получение данных о фотографии (кол-во лайков и комментов).
    *
    * @method setCurrentPicture
-   * @param {number} pos
+   * @param {number|string} index
    */
-  Gallery.prototype.setCurrentPicture = function(pos) {
-    var end = this.pictures.length - 1;
+  Gallery.prototype.setCurrentPicture = function(index) {
+    var currentPic;
 
-    // Проверяем и правим индекс
-    if (pos < 0) {
-      pos = end;
-    } else if (pos > end) {
-      pos = 0;
+    if (typeof index === 'number') { // Если переданный аргумент - число.
+      this._checkPosition(index);
+      this._currentImage = index;
+
+    } else if (typeof index === 'string') {  // Если переданный аргумент - строка.
+      this.pictures.forEach(function(item, i) {
+        if (item.url === index) {
+          this._checkPosition(i);
+          this._currentImage = i;
+        }
+      }.bind(this));
     }
 
-    // Сохраняем позицию
-    this._currentImage = pos;
-
-    var currentPic = this.pictures[this._currentImage];
+    currentPic = this.pictures[this._currentImage];
     this._image.src = currentPic.url;
     this._likes.textContent = currentPic.likes;
     this._comments.textContent = currentPic.comments;
@@ -139,7 +172,36 @@
    */
   Gallery.prototype._onPhotoClick = function(evt) {
     if (evt.target.classList.contains('gallery-overlay-image')) {
+      this._setHash(this.pictures[++this._currentImage].url);
       this.setCurrentPicture(++this._currentImage);
+    }
+  };
+
+  /**
+   * @private
+   * @method setHash
+   *
+   * @param {string} hash
+   */
+  Gallery.prototype._setHash = function(hash) {
+    location.hash = hash ? 'photo/' + hash : '';
+  };
+
+  /**
+   * Обработчик изменения адресной строки (regExp проверка
+   * содержимого после #)
+   *
+   * @private
+   * @method _onHashChange
+   */
+  Gallery.prototype._onHashChange = function() {
+    this._hash = location.hash.match(/#photo\/(\S+)/);
+
+    if (this._hash && this._hash[1] !== '') {
+      this.setCurrentPicture(this._hash[1]);
+      this.show();
+    } else {
+      this.hide();
     }
   };
 

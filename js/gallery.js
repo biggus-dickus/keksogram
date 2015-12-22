@@ -13,17 +13,29 @@
     /** @member {HTMLElement} element */
     this.element = document.querySelector('.gallery-overlay');
 
-   /**
-    * @private
-    *
-    * @member {HTMLElement} _closeButton
-    * @member {HTMLElement} _image
-    * @member {HTMLElement} _likes
-    * @member {HTMLElement} _comments
-    */
+    /**
+     * @private
+     * @member {HTMLElement} _closeButton
+     */
     this._closeButton = document.querySelector('.gallery-overlay-close');
+
+    /**
+     * @private
+     * @member image
+     */
+
     this._image = document.querySelector('.gallery-overlay-image');
+
+    /**
+     * @private
+     * @member _likes
+     */
     this._likes = document.querySelector('.likes-count');
+
+    /**
+     * @private
+     * @member _comments
+     */
     this._comments = document.querySelector('.comments-count');
 
     /**

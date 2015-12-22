@@ -39,10 +39,17 @@
    * @member {?Object} _data
    */
   Photo.prototype._data = null;
+
+  /** @member {?HTMLElement} element */
   Photo.prototype.element = null;
+
+  /** @member {?HTMLElement} currentImg */
   Photo.prototype.currentImg = null;
+
+  /** @member {?Image} requestedPic */
   Photo.prototype.requestedPic = null;
 
+  /** @member {HTMLElement} template */
   Photo.prototype.template = document.querySelector('#picture-template');
 
   /**
@@ -108,7 +115,7 @@
     // Создаем новый экземпляр Image который будет работать с данными из json.
     this.requestedPic = new Image(182, 182);
 
-    // Установка таймаута на загрузку изображения.
+    // Установка таймаута на загрузку изображения.
     this.imageLoadTimeout = setTimeout(this._onPhotoError, this.IMAGE_TIMEOUT);
 
     // Отмена таймаута при загрузке и замена картинок.

@@ -102,17 +102,17 @@
 
     // Выгрузка фотографий на страницу теперь осуществляется через объявление экземпляра
     // Photo и вызов у него метода render().
-    renderedElements = renderedElements.concat(picsOnPage.map(function(item, i) {
+    renderedElements = renderedElements.concat(picsOnPage.map(function(item) {
       var pic = new Photo(item);
       pic.render();
       fragment.appendChild(pic.element);
 
-      // Обработчик взаимодействия с фотографией: вызов методов setCurrentPicture и show
-      // у объекта Галерея.
+      // Обработчик взаимодействия с фотографией теперь работает с адресной
+      // строкой, куда он передает обрезанную часть пути src, начиная с "photos".
       pic.onClick = function() {
-        gallery.data = pic._data;
-        gallery.setCurrentPicture(i + from); // Без from в галерее будет только 12 фотографий.
-        gallery.show();
+        var hashToAdd = pic.requestedPic.src;
+        location.hash = 'photo/' + hashToAdd.substr(hashToAdd.indexOf('photos'));
+        gallery._onHashChange();
       };
 
       return pic;

@@ -1,19 +1,18 @@
 /**
- * Конструктор и прототипы объекта Фото.
+ * Конcтруктор и прототипы объекта Фото. Работает с данными из pictures.json.
+ *
  * @author Max Maslenko (lynchnost@gmail.com)
  */
-
 'use strict';
 
 (function() {
   /**
+   * @constructor Photo
+   *
    * @param {Object} data
-   * @constructor
    */
   function Photo(data) {
     this._data = data;
-    this.IMAGE_TIMEOUT = 10000;
-    this.template = document.querySelector('#picture-template');
 
     // Адаптация функции для IE, где нет поддержки <template>
     if ('content' in this.template) {
@@ -22,72 +21,120 @@
       this.element = this.template.children[0].cloneNode(true);
     }
 
-    /**
-     * Обработчик клика по картинке.
-     * @private
-     * @param {Event} evt
-     */
-    this._onPhotoClick = function(evt) {
-      evt.preventDefault();
-      if (!this.element.classList.contains('picture-load-failure')) {
-        if (typeof this.onClick === 'function') {
-          this.onClick();
-        }
-      }
-    }.bind(this);
+    // Привязка методов к контексту объекта в конструкторе.
+    this._onPhotoLoad = this._onPhotoLoad.bind(this);
+    this._onPhotoClick = this._onPhotoClick.bind(this);
+    this._onPhotoError = this._onPhotoError.bind(this);
   }
 
-  // Создание DOM-элемента на основе шаблона из списка pictures.json
-  // теперь осуществляется через метод render() у прототипа объекта Photo.
+  /**
+   * @const
+   * @member {number} IMAGE_TIMEOUT
+   */
+  Photo.prototype.IMAGE_TIMEOUT = 10000;
+  Photo.prototype.imageLoadTimeout = 0;
+
+  /**
+   * @private
+   * @member {?Object} _data
+   */
+  Photo.prototype._data = null;
+  Photo.prototype.element = null;
+  Photo.prototype.currentImg = null;
+  Photo.prototype.requestedPic = null;
+
+  Photo.prototype.template = document.querySelector('#picture-template');
+
+  /**
+   * Обработчик клика по картинке.
+   *
+   * @private
+   * @method _onPhotoClick
+   *
+   * @param {Event} evt
+   */
+  Photo.prototype._onPhotoClick = function(evt) {
+    evt.preventDefault();
+    if (!this.element.classList.contains('picture-load-failure')) {
+      if (typeof this.onClick === 'function') {
+        this.onClick();
+      }
+    }
+  };
+
+  /**
+   * Обработчик ошибки загрузки изображения.
+   *
+   * @private
+   * @method _onPhotoError
+   */
+  Photo.prototype._onPhotoError = function() {
+    this.requestedPic.src = '';
+    this.element.classList.remove('picture-load-process');
+    this.element.classList.add('picture-load-failure');
+    this.element.href = '#';
+  };
+
+  /**
+   * Обработчик успешной загрузки изображения.
+   *
+   * @private
+   * @method _onPhotoLoad
+   */
+  Photo.prototype._onPhotoLoad = function() {
+    clearTimeout(this.imageLoadTimeout);
+    this.element.classList.remove('picture-load-process');
+    this.element.replaceChild(this.requestedPic, this.currentImg);
+    this.element.href = this.requestedPic.src;
+  };
+
+  /**
+   * Создание DOM-элемента на основе шаблона из списка pictures.json
+   * теперь осуществляется через метод render() у прототипа объекта Photo.
+   *
+   * @method render
+   */
   Photo.prototype.render = function() {
-    // Вывод количества лайков и комментариев:
+    // Вывод количеcтва лайков и комментариев:
     this.element.querySelector('.picture-comments').textContent = this._data.comments;
     this.element.querySelector('.picture-likes').textContent = this._data.likes;
-
-    /**
-     * Объявляем переменные картинок: первая - заменяемый тэг в шаблоне,
-     * вторая - загружаемое с сервера изображение.
-     */
-    /** @var {HTMLElement} currentImg */
-    var currentImg = this.element.querySelector('img');
-    /** @var {Image} requestedPic */
-    var requestedPic = new Image(182, 182);
 
     // До загрузки картинки будет отображаться иконка-спиннер.
     this.element.classList.add('picture-load-process');
 
-    var showLoadingError = function() {
-      requestedPic.src = '';
-      this.element.classList.remove('picture-load-process');
-      this.element.classList.add('picture-load-failure');
-      this.element.href = '#';
-    }.bind(this);
+    // Загружаем изображение
+    this.currentImg = this.element.querySelector('img');
 
-    // Установка таймаута на загрузку изображения.
-    var imageLoadTimeout = setTimeout(showLoadingError, this.IMAGE_TIMEOUT);
+    // Создаем новый экземпляр Image который будет работать с данными из json.
+    this.requestedPic = new Image(182, 182);
+
+    // Установка таймаута на загрузку изображения.
+    this.imageLoadTimeout = setTimeout(this._onPhotoError, this.IMAGE_TIMEOUT);
 
     // Отмена таймаута при загрузке и замена картинок.
-    requestedPic.onload = function() {
-      clearTimeout(imageLoadTimeout);
-      this.element.classList.remove('picture-load-process');
-      this.element.replaceChild(requestedPic, currentImg);
-      this.element.href = requestedPic.src;
-    }.bind(this);
+    this.requestedPic.onload = this._onPhotoLoad;
 
     // Обработка ошибки сервера
-    requestedPic.onerror = showLoadingError;
+    this.requestedPic.onerror = this._onPhotoError;
 
     // Изменение src у изображения начинает загрузку.
-    requestedPic.src = this._data.url;
+    this.requestedPic.src = this._data.url;
 
     // В загруженные фотографии добавляется обработчик клика.
     this.element.addEventListener('click', this._onPhotoClick);
   };
 
-  /** @type {?Function} */
+  /**
+   * @method onClick
+   * @type {?Function}
+   */
   Photo.prototype.onClick = null;
 
-  // Удаление обработчика клика по фотографии.
+  /**
+   * Метод удаления обработчика клика по картинке.
+   *
+   * @method remove
+   */
   Photo.prototype.remove = function() {
     this.element.removeEventListener('click', this._onPhotoClick);
   };

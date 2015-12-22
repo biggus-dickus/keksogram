@@ -13,7 +13,7 @@
   /** @var {HTMLElement} filterForm */
   var filterForm = document.querySelector('.filters');
   /** @var {string} activeFilter */
-  var activeFilter = 'filter-popular';
+  var activeFilter = localStorage.getItem('activeFilter') || 'filter-popular';
   /** @var {HTMLElement} container */
   var container = document.querySelector('.pictures');
   /** @var {Array.<string>} pictures */
@@ -163,10 +163,14 @@
     gallery.setPictures(filteredPictures);
 
     // Вывод отфильтрованного массива. Флаг true отвечает за чистку контейнера.
-    // (условие для replace в renderPictures();). Обязательно сбрасываем счетчик.
+    // (условие для replace в renderPictures). Обязательно сбрасываем счетчик.
     currentPage = 0;
     renderPictures(filteredPictures, currentPage, true);
     activeFilter = id;
+
+    // Запись фильтра в localStorage и его последующее использование (напр., при F5).
+    localStorage.setItem('activeFilter', id);
+    filterForm[activeFilter].checked = true;
   }
 
 

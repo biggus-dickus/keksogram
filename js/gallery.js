@@ -21,9 +21,8 @@
 
     /**
      * @private
-     * @member image
+     * @member _image
      */
-
     this._image = document.querySelector('.gallery-overlay-image');
 
     /**

@@ -40,13 +40,13 @@
    */
   Photo.prototype._data = null;
 
-  /**
-   * @member {?HTMLElement} element
-   * @member {?HTMLElement} currentImg
-   * @member {?Image} requestedPic
-   */
+  /** @member {?HTMLElement} element */
   Photo.prototype.element = null;
+
+  /** @member {?HTMLElement} currentImg */
   Photo.prototype.currentImg = null;
+
+  /** @member {?Image} requestedPic */
   Photo.prototype.requestedPic = null;
 
   /** @member {HTMLElement} template */

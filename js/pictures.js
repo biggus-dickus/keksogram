@@ -20,6 +20,8 @@
   var pictures = [];
   /** @var {Array.<string>} filteredPictures */
   var filteredPictures = [];
+  /** @var {Array.<string>} renderedElements */
+  var renderedElements = [];
   /** @var {number} currentPage */
   var currentPage = 0;
   /** @constant {number} PAGE_SIZE */
@@ -85,12 +87,12 @@
   function renderPictures(picturesToRender, pageNumber, replace) {
     if (replace) {
       // Очистка контейнера, если по фильтру кликнули, и, соответственно, replace = true.
-      var renderedElements = document.querySelectorAll('.picture');
-      // На коллекции renderedElements (недомассиве) используем метод forEach с помощью
-      // метода call, для чего создается обыкновенный пустой массив.
-      [].forEach.call(renderedElements, function(el) {
-        container.removeChild(el);
-      });
+      var el;
+      while ((el = renderedElements.shift())) {
+        container.removeChild(el.element);
+        el.onClick = null;
+        el.remove();
+      }
     }
 
     var fragment = document.createDocumentFragment();
@@ -99,23 +101,24 @@
     var picsOnPage = picturesToRender.slice(from, to);
 
     // Выгрузка фотографий на страницу теперь осуществляется через объявление экземпляра
-    // Photo в цикле forEach и вызов у него метода render().
-    picsOnPage.forEach(function(item) {
+    // Photo и вызов у него метода render().
+    renderedElements = renderedElements.concat(picsOnPage.map(function(item, i) {
       var pic = new Photo(item);
       pic.render();
       fragment.appendChild(pic.element);
 
-      // Обработчик взаимодействия с фотографией: отслеживание клика.
-      pic.element.addEventListener('click', _onImageClick);
-    });
+      // Обработчик взаимодействия с фотографией: вызов методов setCurrentPicture и show
+      // у объекта Галерея.
+      pic.onClick = function() {
+        gallery.data = pic._data;
+        gallery.setCurrentPicture(i + from); // Без from в галерее будет только 12 фотографий.
+        gallery.show();
+      };
+
+      return pic;
+    }));
 
     container.appendChild(fragment);
-  }
-
-  // Обработчик клика по картинке: показ галереи.
-  function _onImageClick(evt) {
-    evt.preventDefault();
-    gallery.show();
   }
 
   /**
@@ -151,6 +154,13 @@
         });
         break;
     }
+
+    /**
+     * Отфильтрованный массив картинок сперва добавляется в объект Галереи
+     * через ее метод setPictures().
+     * @param {Array.<Object>} filteredPictures
+     */
+    gallery.setPictures(filteredPictures);
 
     // Вывод отфильтрованного массива. Флаг true отвечает за чистку контейнера.
     // (условие для replace в renderPictures();). Обязательно сбрасываем счетчик.

@@ -1,5 +1,5 @@
 /**
- * Конструктор и прототипы объекта Галерея.
+ * Конструктор и прототипы объекта Галерея.
  *
  * @author Max Maslenko (lynchnost@gmail.com)
  */
@@ -10,23 +10,44 @@
    * @constructor Gallery
    */
   function Gallery() {
+    /** @member {HTMLElement} element */
     this.element = document.querySelector('.gallery-overlay');
+
+   /**
+    * @private
+    *
+    * @member {HTMLElement} _closeButton
+    * @member {HTMLElement} _image
+    * @member {HTMLElement} _likes
+    * @member {HTMLElement} _comments
+    */
     this._closeButton = document.querySelector('.gallery-overlay-close');
     this._image = document.querySelector('.gallery-overlay-image');
     this._likes = document.querySelector('.likes-count');
     this._comments = document.querySelector('.comments-count');
-    // Список изображений из json, изначально - пустой массив.
+
+    /**
+     * Список изображений из json, изначально - пустой массив.
+     * @member {Array} pictures
+     */
     this.pictures = [];
-    // Индекс текущей картинки в галерее.
+
+    /**
+     * Индекс текущей картинки в галерее.
+     * @private
+     *
+     * @member {number} _currentImage
+     */
     this._currentImage = 0;
 
-    // Привязка контекста обработки событий (мышь, клавиатура, изменения
-    // в адресной строке) к объекту Gallery в конструкторе.
+    // Привязка контекста обработки событий (мышь, клавиатура, изменения
+    // в адресной строке) к объекту Gallery в конструкторе.
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onHashChange = this._onHashChange.bind(this);
 
+    // Изменения адресной строки слушаются в глобальном контексте.
     window.addEventListener('load', this._onHashChange);
     window.addEventListener('hashchange', this._onHashChange);
   }
@@ -52,7 +73,7 @@
   };
 
   /**
-   * Скрытие галереи и удаление обработчиков ее �обытий.
+   * Скрытие галереи и удаление обработчиков ее событий.
    * @method hide
    */
   Gallery.prototype.hide = function() {
@@ -62,6 +83,9 @@
     this._image.removeEventListener('click', this._onPhotoClick);
     this.element.removeEventListener('click', this._onCloseClick);
     document.removeEventListener('keydown', this._onDocumentKeyDown);
+
+    window.removeEventListener('load', this._onHashChange);
+    window.removeEventListener('hashchange', this._onHashChange);
   };
 
   /**
@@ -94,13 +118,15 @@
         break;
       // Стрелка влево.
       case 37:
-        this._setHash(this.pictures[--this._currentImage].url);
-        this.setCurrentPicture(--this._currentImage);
+        this._currentImage--;
+        this.setCurrentPicture(this._currentImage);
+        this._setHash(this.pictures[this._currentImage].url);
         break;
       // Стрелка вправо.
       case 39:
-        this._setHash(this.pictures[++this._currentImage].url);
-        this.setCurrentPicture(++this._currentImage);
+        this._currentImage++;
+        this.setCurrentPicture(this._currentImage);
+        this._setHash(this.pictures[this._currentImage].url);
         break;
     }
   };
@@ -116,12 +142,15 @@
   };
 
   /**
-   * Проверка первого и последнего номера в массиве,
-   * должна сбрасывать счет.
+   * Проверка первого и последнего индекса в массиве, сбрасывает счет
+   * (если index в setCurrentPicture - число).
+   *
+   * @private
+   *
    * @param  {number} num
    * @return {number} num
    */
-  Gallery.prototype._checkPosition = function(num) {
+  Gallery.prototype._checkPositionFromNumber = function(num) {
     var end = this.pictures.length - 1;
 
     if (num < 0) {
@@ -129,33 +158,46 @@
     } else if (num > end) {
       num = 0;
     }
-    // return num;
+
+    return num;
   };
 
   /**
-   * Установка текущей фотографии по ее индексу из json,
-   * получение данных о фотографии (кол-во лайков и комментов).
+   * Если index в setCurrentPicture - строка, приводим его к числу при итерации
+   * forEach в проверке типа case 'string'.
+   *
+   * @private
+   *
+   * @param  {string} item
+   * @param  {number} index
+   */
+  Gallery.prototype._getPositionFromString = function(item, index) {
+    if (item.url === this._currentImage) {
+      this._currentImage = index;
+    }
+  };
+
+  /**
+   * Установка текущей фотографии по ее индексу из json, проверка типов
+   * аргумента index, получение данных о фотографии (кол-во лайков и комментов).
    *
    * @method setCurrentPicture
    * @param {number|string} index
    */
   Gallery.prototype.setCurrentPicture = function(index) {
-    var currentPic;
+    var type = typeof index;
 
-    if (typeof index === 'number') { // Если переданный аргумент - число.
-      this._checkPosition(index);
-      this._currentImage = index;
-
-    } else if (typeof index === 'string') {  // Если переданный аргумент - строка.
-      this.pictures.forEach(function(item, i) {
-        if (item.url === index) {
-          this._checkPosition(i);
-          this._currentImage = i;
-        }
-      }.bind(this));
+    switch (type) {
+      case 'number':
+        this._currentImage = this._checkPositionFromNumber(index);
+        break;
+      case 'string':
+        this._currentImage = index;
+        this.pictures.forEach(this._getPositionFromString, this);
+        break;
     }
 
-    currentPic = this.pictures[this._currentImage];
+    var currentPic = this.pictures[this._currentImage];
     this._image.src = currentPic.url;
     this._likes.textContent = currentPic.likes;
     this._comments.textContent = currentPic.comments;
@@ -172,12 +214,15 @@
    */
   Gallery.prototype._onPhotoClick = function(evt) {
     if (evt.target.classList.contains('gallery-overlay-image')) {
-      this._setHash(this.pictures[++this._currentImage].url);
-      this.setCurrentPicture(++this._currentImage);
+      this._currentImage++;
+      this.setCurrentPicture(this._currentImage);
+      this._setHash(this.pictures[this._currentImage].url);
     }
   };
 
   /**
+   * Метод добавления строки-хэша в адресную строку.
+   *
    * @private
    * @method setHash
    *

@@ -59,7 +59,7 @@ define(function() {
     this._onHashChange = this._onHashChange.bind(this);
 
     // Изменения адресной строки слушаются в глобальном контексте.
-    window.addEventListener('load', this._onHashChange);
+    // window.addEventListener('load', this._onHashChange);
     window.addEventListener('hashchange', this._onHashChange);
   }
 
@@ -150,6 +150,7 @@ define(function() {
    */
   Gallery.prototype.setPictures = function(pictures) {
     this.pictures = pictures;
+    this._onHashChange();
   };
 
   /**

@@ -11,7 +11,7 @@ requirejs.config({
   baseUrl: 'js'
 });
 
-define(['photo', 'gallery', 'resizer', 'upload'], function(Photo, Gallery) {
+define(['gallery', 'photo', 'resizer', 'upload'], function(Gallery, Photo) {
   /** @var {HTMLElement} filterForm */
   var filterForm = document.querySelector('.filters');
   /** @var {string} activeFilter */
@@ -61,7 +61,6 @@ define(['photo', 'gallery', 'resizer', 'upload'], function(Photo, Gallery) {
 
   // Если 12 картинок помещаются на странице, используем ф-ю addPageOnScroll() еще и на событии 'load'
   // (адаптация для больших разрешений).
-  window.addEventListener('load', addPageOnScroll);
 
   function addPageOnScroll() {
     var bodyCurrentHeight = document.documentElement.offsetHeight;
@@ -121,6 +120,7 @@ define(['photo', 'gallery', 'resizer', 'upload'], function(Photo, Gallery) {
     }));
 
     container.appendChild(fragment);
+    addPageOnScroll();
   }
 
   /**

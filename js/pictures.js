@@ -1,5 +1,3 @@
-/* global Photo: true, Gallery: true */
-
 /**
  * Модуль выгрузки картинок из data/pictures.json, обработки данных
  * и вывода на страницу с использованием <template>. Фильтрация картинок.
@@ -9,7 +7,11 @@
 
 'use strict';
 
-(function() {
+requirejs.config({
+  baseUrl: 'js'
+});
+
+define(['photo', 'gallery', 'resizer', 'upload'], function(Photo, Gallery) {
   /** @var {HTMLElement} filterForm */
   var filterForm = document.querySelector('.filters');
   /** @var {string} activeFilter */
@@ -222,4 +224,4 @@
 
   // Снова показываем блок с фильтрами.
   filterForm.classList.remove('hidden');
-})();
+});

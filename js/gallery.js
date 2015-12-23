@@ -5,7 +5,7 @@
  */
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @constructor Gallery
    */
@@ -261,5 +261,5 @@
     }
   };
 
-  window.Gallery = Gallery;
-})();
+  return Gallery;
+});

@@ -180,7 +180,7 @@ define(['gallery', 'photo', 'resizer', 'upload'], function(Gallery, Photo) {
   // Note to self: указывать ссылку надо ОТНОСИТЕЛЬНО INDEX.HTML!!!
   function getPictures() {
     var xhr = new XMLHttpRequest();
-    xhr.timeout = 10000;
+    // xhr.timeout = 10000;
     xhr.open('GET', 'data/pictures.json');
 
     // Пока идет загрузка, показываем прелоадер.

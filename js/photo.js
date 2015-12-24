@@ -76,7 +76,6 @@ define(function() {
    * @method _onPhotoError
    */
   Photo.prototype._onPhotoError = function() {
-    this.requestedPic.src = '';
     this.element.classList.remove('picture-load-process');
     this.element.classList.add('picture-load-failure');
     this.element.href = '#';

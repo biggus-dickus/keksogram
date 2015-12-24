@@ -86,7 +86,7 @@ define(['gallery', 'photo', 'resizer', 'upload'], function(Gallery, Photo) {
    * @param  {boolean=} replace
    */
   function renderPictures(picturesToRender, pageNumber, replace) {
-    if (replace) {
+    if (replace && renderedElements instanceof Array && renderedElements.length) {
       // Очистка контейнера, если по фильтру кликнули, и, соответственно, replace = true.
       var el;
       while ((el = renderedElements.shift())) {
@@ -180,7 +180,6 @@ define(['gallery', 'photo', 'resizer', 'upload'], function(Gallery, Photo) {
   // Note to self: указывать ссылку надо ОТНОСИТЕЛЬНО INDEX.HTML!!!
   function getPictures() {
     var xhr = new XMLHttpRequest();
-    // xhr.timeout = 10000;
     xhr.open('GET', 'data/pictures.json');
 
     // Пока идет загрузка, показываем прелоадер.
